@@ -33,6 +33,7 @@ shell: build
 	$(DOCKER_RUN_DOCKER) bash
 
 build: bundles
+	ln -sf Dockerfile.$(target) Dockerfile
 	docker build -t "$(DOCKER_IMAGE)" .
 
 docs-build:
