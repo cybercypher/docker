@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -x
 
 DEST=$1
 
-go build -o $DEST/docker-$VERSION -ldflags "$LDFLAGS $LDFLAGS_STATIC" $BUILDFLAGS ./docker
+CGO_ENABLED=${CGO_ENABLED:-1} CC=${CC:-gcc} GOOS=${GOOS:-linux} GOARCH=${GOARCH:-amd64} go build -o $DEST/docker-$VERSION -ldflags "$LDFLAGS $LDFLAGS_STATIC" $BUILDFLAGS ./docker
 echo "Created binary: $DEST/docker-$VERSION"
