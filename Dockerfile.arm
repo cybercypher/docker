@@ -75,7 +75,7 @@ RUN	apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq \
 
 # Get and compile LXC 0.8 (since it is the most stable)
 RUN	git clone --no-checkout https://github.com/lxc/lxc.git /usr/local/lxc && cd /usr/local/lxc && git checkout -q lxc-0.8.0
-RUN	cd /usr/local/lxc && ./autogen.sh  && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=generic-arm5" ./configure --host=arm-linux-gnueabihf --disable-docs && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=generic-arm5" make && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=generic-arm5" make install
+RUN	cd /usr/local/lxc && ./autogen.sh  && CC=arm-linux-gnueabihf-gcc ARCH=arm ./configure --host=arm-linux-gnueabihf --disable-docs && CC=arm-linux-gnueabihf-gcc ARCH=arm make && CC=arm-linux-gnueabihf-gcc ARCH=arm make install
 
 # Get lvm2 source for compiling statically
 RUN	git clone --no-checkout https://git.fedorahosted.org/git/lvm2.git /usr/local/lvm2 && cd /usr/local/lvm2 && git checkout -q v2_02_103
