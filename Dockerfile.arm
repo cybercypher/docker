@@ -75,7 +75,7 @@ RUN	apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -yq \
 
 # Get and compile LXC 0.8 (since it is the most stable)
 RUN	git clone --no-checkout https://github.com/lxc/lxc.git /usr/local/lxc && cd /usr/local/lxc && git checkout -q lxc-0.8.0
-RUN	cd /usr/local/lxc && ./autogen.sh  && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=cortex-a8" ./configure --host=arm-linux-gnueabihf --disable-docs && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=cortex-a8" make && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=cortex-a8" make install
+RUN	cd /usr/local/lxc && ./autogen.sh  && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=generic-arm5" ./configure --host=arm-linux-gnueabihf --disable-docs && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=generic-arm5" make && CC=arm-linux-gnueabihf-gcc ARCH=arm CFLAGS="-marm -mcpu=generic-arm5" make install
 
 # Get lvm2 source for compiling statically
 RUN	git clone --no-checkout https://git.fedorahosted.org/git/lvm2.git /usr/local/lvm2 && cd /usr/local/lvm2 && git checkout -q v2_02_103
@@ -99,7 +99,7 @@ RUN     cd /usr/local/go/src && ./make.bash --no-clean 2>&1
 # Compile Go for cross compilation
 ENV	DOCKER_CROSSPLATFORMS	linux/arm
 # (set an explicit GOARM of 5 for maximum compatibility)
-ENV	GOARM	7	
+ENV	GOARM	5	
 RUN	cd /usr/local/go/src && bash -xc 'for platform in $DOCKER_CROSSPLATFORMS; do GOOS=${platform%/*} GOARCH=${platform##*/} ./make.bash --no-clean 2>&1; done'
 
 # Grab Go's cover tool for dead-simple code coverage testing
@@ -122,5 +122,3 @@ ENTRYPOINT	["hack/dind"]
 
 # Upload docker source
 ADD	.	/go/src/github.com/dotcloud/docker
-#RUN     sed -ie '/amd64/,+3d' /go/src/github.com/dotcloud/docker/engine/engine.go
-#RUN     sed -ie '/runtime/d' /go/src/github.com/dotcloud/docker/engine/engine.go
