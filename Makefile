@@ -1,7 +1,8 @@
 .PHONY: all binary build cross default docs docs-build docs-shell shell test test-integration
 
+target := amd64
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
-DOCKER_IMAGE := docker:$(GIT_BRANCH)
+DOCKER_IMAGE := docker-${target}-${GIT_BRANCH}
 DOCKER_DOCS_IMAGE := docker-docs:$(GIT_BRANCH)
 DOCKER_RUN_DOCKER := docker run --rm -i -t --privileged -e TESTFLAGS -v "$(CURDIR)/bundles:/go/src/github.com/dotcloud/docker/bundles" "$(DOCKER_IMAGE)"
 
