@@ -2,7 +2,7 @@
 
 DEST=$1
 
-go build \
+CGO_ENABLED=${CGO_ENABLED:-1} CC=${CC:-gcc} GOOS=${GOOS:-linux} GOARCH=${GOARCH:-amd64} go build \
 	-o "$DEST/docker-$VERSION" \
 	"${BUILDFLAGS[@]}" \
 	-ldflags "
