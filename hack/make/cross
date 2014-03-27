@@ -17,7 +17,20 @@ for platform in $DOCKER_CROSSPLATFORMS; do
 		mkdir -p "$DEST/$platform" # bundles/VERSION/cross/GOOS/GOARCH/docker-VERSION
 		export GOOS=${platform%/*}
 		export GOARCH=${platform##*/}
-		export LDFLAGS_STATIC_DOCKER="" # we just need a simple client for these platforms (TODO this might change someday)
+		case ${GOOS}-${GOARCH} in
+			linux-amd64)
+				export CGO_ENABLED=1
+			;;
+			linux-arm)
+				export CC=${GOARCH}-${GOOS}-gnueabihf-gcc
+				export CGO_ENABLED=1	
+				LDFLAGS="-extld=${CC} $LDFLAGS"
+			;;
+			*)
+		       		export CGO_ENABLED=0
+				export LDFLAGS_STATIC_DOCKER="" # we just need a simple client for these platforms (TODO this might change someday)
+			;;
+		esac
 		source "$(dirname "$BASH_SOURCE")/binary" "$DEST/$platform"
 	)
 done
