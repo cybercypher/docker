@@ -3,6 +3,7 @@
 # env vars passed through directly to Docker's build scripts
 # to allow things like `make DOCKER_CLIENTONLY=1 binary` easily
 # `docs/sources/contributing/devenvironment.md ` and `project/PACKAGERS.md` have some limited documentation of some of these
+target := amd64
 DOCKER_ENVS := \
 	-e BUILDFLAGS \
 	-e DOCKER_CLIENTONLY \
@@ -44,7 +45,7 @@ binary: build
 	$(DOCKER_RUN_DOCKER) hack/make.sh binary
 
 cross: build
-	$(DOCKER_RUN_DOCKER) hack/make.sh binary cross
+	$(DOCKER_RUN_DOCKER) hack/make.sh cross 
 
 docs: docs-build
 	$(DOCKER_RUN_DOCS) -p $(if $(DOCSPORT),$(DOCSPORT):)8000 "$(DOCKER_DOCS_IMAGE)" mkdocs serve
@@ -80,6 +81,7 @@ shell: build
 	$(DOCKER_RUN_DOCKER) bash
 
 build: bundles
+	ln -sf Dockerfile.$(target) Dockerfile
 	docker build -t "$(DOCKER_IMAGE)" .
 
 docs-build:

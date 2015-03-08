@@ -238,18 +238,19 @@ main() {
 	# We want this to fail if the bundles already exist and cannot be removed.
 	# This is to avoid mixing bundles from different versions of the code.
 	mkdir -p bundles
-	if [ -e "bundles/$VERSION" ]; then
-		echo "bundles/$VERSION already exists. Removing."
-		rm -fr bundles/$VERSION && mkdir bundles/$VERSION || exit 1
-		echo
-	fi
-	SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+		SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	if [ $# -lt 1 ]; then
 		bundles=(${DEFAULT_BUNDLES[@]})
 	else
 		bundles=($@)
 	fi
 	for bundle in ${bundles[@]}; do
+                if [ -e "bundles/$VERSION/${bundle}" ]; then
+		  echo "bundles/$VERSION/${bundle} already exists. Removing."
+		  rm -fr bundles/$VERSION/${bundle} && mkdir bundles/$VERSION/${bundle} || exit 1
+		  echo
+	        fi
+
 		bundle $SCRIPTDIR/make/$bundle
 		echo
 	done

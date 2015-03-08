@@ -7,6 +7,7 @@ DEST=$1
 declare -A daemonSupporting
 daemonSupporting=(
 	[linux/amd64]=1
+  	[linux/arm]=1
 )
 
 # if we have our linux/amd64 version compiled, let's symlink it in
@@ -22,12 +23,24 @@ fi
 for platform in $DOCKER_CROSSPLATFORMS; do
 	(
 		mkdir -p "$DEST/$platform" # bundles/VERSION/cross/GOOS/GOARCH/docker-VERSION
-		export GOOS=${platform%/*}
-		export GOARCH=${platform##*/}
+    GOOS=${platform%/*}
+    GOARCH=${platform##*/}
+    CC=gcc
+    CGO_ENABLED=0
+    if [[ "" != `command -v ${GOARCH}-${GOOS}-gnueabihf-gcc` ]] ; then
+       export CC=${GOARCH}-${GOOS}-gnueabihf-gcc
+       export CGO_ENABLED=1
+    fi 
+       export GOOS=${platform%/*}
+       export GOARCH=${platform##*/}
+		echo "${daemonSupporting[$platform]} exists"
 		if [ -z "${daemonSupporting[$platform]}" ]; then
 			export LDFLAGS_STATIC_DOCKER="" # we just need a simple client for these platforms
 			export BUILDFLAGS=( "${ORIG_BUILDFLAGS[@]/ daemon/}" ) # remove the "daemon" build tag from platforms that aren't supported
+		else		
+			export LDFLAGS_STATIC_DOCKER="-extld=${CC} $LDFLAGS_STATIC_DOCKER" # we just need a simple client for these platforms
 		fi
+		
 		source "$(dirname "$BASH_SOURCE")/binary" "$DEST/$platform"
 	)
 done
